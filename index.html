@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>くまちゃんとえいごであそぼう！</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="くまちゃん">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "BIZ UDGothic", "Yu Gothic", sans-serif;
+    background: linear-gradient(180deg, #aee7ff 0%, #fdf6d8 70%, #c8f0c0 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: 16px; user-select: none;
+  }
+  /* 星（ごほうび） */
+  #stars {
+    min-height: 44px; font-size: 32px; letter-spacing: 4px; text-align: center;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,.15));
+  }
+  /* くまちゃん本体 */
+  #bear-area { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  #bear {
+    font-size: 140px; line-height: 1; transition: transform .2s;
+    filter: drop-shadow(0 6px 8px rgba(0,0,0,.2));
+  }
+  #bear.talking { animation: bounce .45s infinite alternate ease-in-out; }
+  #bear.listening { animation: sway 1.6s infinite alternate ease-in-out; }
+  @keyframes bounce { from { transform: translateY(0) scale(1); } to { transform: translateY(-14px) scale(1.05); } }
+  @keyframes sway { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+  #status {
+    font-size: 22px; font-weight: bold; color: #6b4f2a; background: #fffdf5cc;
+    padding: 8px 24px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,.1);
+    min-height: 44px; display: flex; align-items: center;
+  }
+  /* 大きなスタート／ストップボタン */
+  #main-btn {
+    width: 130px; height: 130px; border-radius: 50%; border: none; cursor: pointer;
+    font-size: 56px; color: #fff; box-shadow: 0 8px 0 rgba(0,0,0,.18);
+    background: radial-gradient(circle at 35% 30%, #ff9d76, #ff5d5d);
+    transition: transform .1s, box-shadow .1s;
+  }
+  #main-btn:active { transform: translateY(6px); box-shadow: 0 2px 0 rgba(0,0,0,.18); }
+  #main-btn.stop { background: radial-gradient(circle at 35% 30%, #8fd3ff, #4a90d9); }
+  #main-btn:disabled { opacity: .5; cursor: wait; }
+  #btn-label { margin-top: 8px; font-size: 18px; font-weight: bold; color: #555; text-align: center; }
+  /* 音量メーター（しゃべってる感） */
+  #meter { width: 200px; height: 10px; background: #ffffff88; border-radius: 999px; overflow: hidden; margin-top: 10px; }
+  #meter > div { height: 100%; width: 0%; background: linear-gradient(90deg, #7ed957, #ffd93b); transition: width .08s; }
+  /* APIキー入力（初回のみ・保護者向け） */
+  #key-modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,.45);
+    display: flex; align-items: center; justify-content: center; z-index: 10;
+  }
+  #key-modal.hidden { display: none; }
+  #key-box {
+    background: #fff; border-radius: 16px; padding: 24px; width: min(90vw, 420px);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  #key-box h2 { font-size: 18px; color: #333; }
+  #key-box p { font-size: 13px; color: #666; }
+  #key-input { font-size: 14px; padding: 10px; border: 2px solid #ccc; border-radius: 8px; }
+  #key-save { font-size: 16px; padding: 10px; border: none; border-radius: 8px; background: #4a90d9; color: #fff; cursor: pointer; }
+  #bottom { display: flex; flex-direction: column; align-items: center; padding-bottom: 8px; }
+</style>
+</head>
+<body>
+  <div id="stars"></div>
+
+  <div id="bear-area">
+    <div id="bear">🧸</div>
+    <div id="status">ボタンをおしてね！</div>
+    <div id="meter"><div></div></div>
+  </div>
+
+  <div id="bottom">
+    <button id="main-btn">▶</button>
+    <div id="btn-label">スタート</div>
+  </div>
+
+  <div id="key-modal" class="hidden">
+    <div id="key-box">
+      <h2>🔑 初回設定（保護者の方へ）</h2>
+      <p>Gemini APIキーを入力してください。このブラウザに保存され、次回からは不要です。</p>
+      <input id="key-input" type="password" placeholder="AIzaSy...">
+      <button id="key-save">保存してはじめる</button>
+    </div>
+  </div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

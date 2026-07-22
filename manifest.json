@@ -1,0 +1,12 @@
+{
+  "name": "くまちゃんえいかいわ",
+  "short_name": "くまちゃん",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": ".",
+  "background_color": "#aee7ff",
+  "theme_color": "#aee7ff",
+  "icons": [
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
