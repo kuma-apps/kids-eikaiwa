@@ -66,7 +66,24 @@
   #key-box p { font-size: 13px; color: #666; }
   #key-input { font-size: 14px; padding: 10px; border: 2px solid #ccc; border-radius: 8px; }
   #key-save { font-size: 16px; padding: 10px; border: none; border-radius: 8px; background: #4a90d9; color: #fff; cursor: pointer; }
-  #bottom { display: flex; flex-direction: column; align-items: center; padding-bottom: 8px; }
+  #bottom { display: flex; flex-direction: column; align-items: center; padding-bottom: 8px; gap: 10px; }
+  /* 話題えらびボタン */
+  #topics { display: flex; gap: 12px; }
+  .topic {
+    width: 58px; height: 58px; border-radius: 50%; border: none; cursor: pointer;
+    font-size: 30px; background: #ffffffdd; box-shadow: 0 4px 0 rgba(0,0,0,.12);
+    transition: transform .1s;
+  }
+  .topic:active { transform: scale(1.15); }
+  #btn-row { display: flex; align-items: flex-end; gap: 28px; }
+  /* ゆっくりボタン */
+  #slow-btn {
+    width: 84px; height: 84px; border-radius: 50%; border: none; cursor: pointer;
+    font-size: 40px; box-shadow: 0 6px 0 rgba(0,0,0,.15);
+    background: radial-gradient(circle at 35% 30%, #c5f3a6, #6fce62);
+  }
+  #slow-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.15); }
+  .side-label { font-size: 14px; font-weight: bold; color: #555; text-align: center; margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -79,8 +96,23 @@
   </div>
 
   <div id="bottom">
-    <button id="main-btn">▶</button>
-    <div id="btn-label">スタート</div>
+    <div id="topics">
+      <button class="topic" data-topic="animals" title="どうぶつ">🐶</button>
+      <button class="topic" data-topic="fruits and food" title="たべもの">🍎</button>
+      <button class="topic" data-topic="colors" title="いろ">🎨</button>
+      <button class="topic" data-topic="numbers and counting" title="かず">✋</button>
+      <button class="topic" data-topic="an animal sound quiz game" title="クイズ">❓</button>
+    </div>
+    <div id="btn-row">
+      <div>
+        <button id="slow-btn">🐢</button>
+        <div class="side-label">ゆっくり</div>
+      </div>
+      <div>
+        <button id="main-btn">▶</button>
+        <div id="btn-label">スタート</div>
+      </div>
+    </div>
   </div>
 
   <div id="key-modal" class="hidden">

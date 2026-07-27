@@ -159,13 +159,11 @@ function connectWS() {
       const msg = JSON.parse(text);
       if (msg.setupComplete) {
         setStatus("きいてるよ！", "listening");
-        // くまちゃんから話しかけてもらう
-        ws.send(JSON.stringify({
-          clientContent: {
-            turns: [{ role: "user", parts: [{ text: "(The girl just opened the app. Greet her!)" }] }],
-            turnComplete: true
-          }
-        }));
+        // くまちゃんから話しかけてもらう（毎回ちがう話題でスタート）
+        const topic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
+        sendText("(She just opened the app. Greet her SLOWLY and warmly in a fresh way, " +
+          "then start with ONE very easy question about " + topic + ". " +
+          "Remember: very slow, 4 words or less, vary your questions today!)");
         resolve();
         return;
       }
@@ -215,6 +213,37 @@ function stopPlayback() {
   playingSources = [];
   playTime = 0;
 }
+
+// ---------- テキスト指示の送信（画面ボタン用） ----------
+function sendText(text) {
+  if (!ws || ws.readyState !== WebSocket.OPEN) return;
+  ws.send(JSON.stringify({
+    clientContent: {
+      turns: [{ role: "user", parts: [{ text }] }],
+      turnComplete: true
+    }
+  }));
+}
+
+// 🐢ゆっくりボタン：同じことをもっとゆっくり言い直してもらう
+$("slow-btn").onclick = () => {
+  if (!running) return;
+  stopPlayback();
+  sendText("(She couldn't catch that. Say the SAME thing again MUCH slower, " +
+    "word ... by ... word, in an even simpler way, and add one short Japanese hint.)");
+  setStatus("もういちど いうね！", "talking");
+};
+
+// 話題えらびボタン：娘が自分で話題を切り替えられる
+document.querySelectorAll(".topic").forEach(b => {
+  b.onclick = () => {
+    if (!running) return;
+    stopPlayback();
+    sendText("(She tapped a picture button! She wants to talk about " + b.dataset.topic +
+      " now. Switch cheerfully and ask ONE very easy question about it. Very slowly!)");
+    setStatus("おはなし かえるね！", "talking");
+  };
+});
 
 // ---------- util ----------
 function b64FromBuffer(buffer) {
