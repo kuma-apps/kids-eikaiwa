@@ -173,7 +173,7 @@ function connectWS() {
       const parts = (sc.modelTurn && sc.modelTurn.parts) || [];
       for (const p of parts) {
         if (p.inlineData && p.inlineData.data) {
-          setStatus("くまちゃんがおはなししてるよ", "talking");
+          setStatus("おひめさまが おはなししてるよ", "talking");
           queuePcm(p.inlineData.data);
         }
       }

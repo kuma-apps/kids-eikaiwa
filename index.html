@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>くまちゃんとえいごであそぼう！</title>
+<title>おひめさまとえいごであそぼう！</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="くまちゃん">
+<meta name="apple-mobile-web-app-title" content="おひめさま">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; overflow: hidden; }
   body {
     font-family: "Hiragino Maru Gothic ProN", "BIZ UDGothic", "Yu Gothic", sans-serif;
-    background: linear-gradient(180deg, #aee7ff 0%, #fdf6d8 70%, #c8f0c0 100%);
+    background: linear-gradient(180deg, #cfe6ff 0%, #f0e8ff 60%, #ffe9f7 100%);
     display: flex; flex-direction: column; align-items: center; justify-content: space-between;
     padding: 16px; user-select: none;
   }
@@ -34,7 +34,7 @@
   @keyframes bounce { from { transform: translateY(0) scale(1); } to { transform: translateY(-14px) scale(1.05); } }
   @keyframes sway { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
   #status {
-    font-size: 22px; font-weight: bold; color: #6b4f2a; background: #fffdf5cc;
+    font-size: 22px; font-weight: bold; color: #5a4a8a; background: #ffffffdd;
     padding: 8px 24px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,.1);
     min-height: 44px; display: flex; align-items: center;
   }
@@ -42,7 +42,7 @@
   #main-btn {
     width: 130px; height: 130px; border-radius: 50%; border: none; cursor: pointer;
     font-size: 56px; color: #fff; box-shadow: 0 8px 0 rgba(0,0,0,.18);
-    background: radial-gradient(circle at 35% 30%, #ff9d76, #ff5d5d);
+    background: radial-gradient(circle at 35% 30%, #c9a6ff, #8e5dd9);
     transition: transform .1s, box-shadow .1s;
   }
   #main-btn:active { transform: translateY(6px); box-shadow: 0 2px 0 rgba(0,0,0,.18); }
@@ -90,7 +90,7 @@
   <div id="stars"></div>
 
   <div id="bear-area">
-    <div id="bear">🧸</div>
+    <div id="bear">👸</div>
     <div id="status">ボタンをおしてね！</div>
     <div id="meter"><div></div></div>
   </div>

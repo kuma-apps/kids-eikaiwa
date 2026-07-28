@@ -1,11 +1,11 @@
 {
-  "name": "くまちゃんえいかいわ",
-  "short_name": "くまちゃん",
+  "name": "おひめさまえいかいわ",
+  "short_name": "おひめさま",
   "display": "standalone",
   "orientation": "portrait",
   "start_url": ".",
-  "background_color": "#aee7ff",
-  "theme_color": "#aee7ff",
+  "background_color": "#cfe6ff",
+  "theme_color": "#cfe6ff",
   "icons": [
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
