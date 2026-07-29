@@ -161,8 +161,8 @@ function connectWS() {
         setStatus("きいてるよ！", "listening");
         // くまちゃんから話しかけてもらう（毎回ちがう話題でスタート）
         const topic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
-        sendText("(She just opened the app. Greet her SLOWLY and warmly in a fresh way, " +
-          "then start with ONE very easy question about " + topic + ". " +
+        sendText("(She just opened the app. Introduce yourself as Princess Yuki, SLOWLY and warmly, " +
+          "in a fresh way, then start with ONE very easy question about " + topic + ". " +
           "Remember: very slow, 4 words or less, vary your questions today!)");
         resolve();
         return;

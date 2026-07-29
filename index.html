@@ -90,7 +90,52 @@
   <div id="stars"></div>
 
   <div id="bear-area">
-    <div id="bear">👸</div>
+    <div id="bear"><svg viewBox="0 0 200 270" width="175" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="dressGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#d6ecff"/><stop offset="1" stop-color="#8fc7f5"/>
+        </linearGradient>
+      </defs>
+      <!-- 後ろ髪 -->
+      <circle cx="100" cy="80" r="50" fill="#f6e3a1"/>
+      <ellipse cx="57" cy="122" rx="12" ry="28" fill="#f6e3a1"/>
+      <ellipse cx="143" cy="122" rx="12" ry="28" fill="#f6e3a1"/>
+      <!-- 三つ編み（右肩） -->
+      <circle cx="146" cy="150" r="11" fill="#f8e8af"/>
+      <circle cx="149" cy="170" r="10" fill="#f6e3a1"/>
+      <circle cx="151" cy="188" r="9" fill="#f8e8af"/>
+      <!-- ティアラ -->
+      <polygon points="84,40 91,24 98,40" fill="#ffc83c"/>
+      <polygon points="96,38 103,16 110,38" fill="#ffc83c"/>
+      <polygon points="108,40 115,24 122,40" fill="#ffc83c"/>
+      <rect x="82" y="38" width="42" height="8" rx="4" fill="#ffc83c"/>
+      <circle cx="103" cy="26" r="4.5" fill="#6aa8ff"/>
+      <!-- 顔 -->
+      <circle cx="100" cy="92" r="36" fill="#ffe4cd"/>
+      <ellipse cx="86" cy="92" rx="5.5" ry="7" fill="#4a3428"/>
+      <ellipse cx="114" cy="92" rx="5.5" ry="7" fill="#4a3428"/>
+      <circle cx="88" cy="89" r="2" fill="#fff"/>
+      <circle cx="116" cy="89" r="2" fill="#fff"/>
+      <ellipse cx="73" cy="103" rx="6" ry="4" fill="#ffb3ac" opacity=".7"/>
+      <ellipse cx="127" cy="103" rx="6" ry="4" fill="#ffb3ac" opacity=".7"/>
+      <path d="M92 105 Q100 113 108 105" stroke="#4a3428" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- 首 -->
+      <rect x="96" y="126" width="8" height="8" fill="#ffe4cd"/>
+      <!-- ドレス（スレンダーなAライン） -->
+      <path d="M100 130 L84 135 Q77 141 75 151 L62 222 Q100 235 138 222 L125 151 Q123 141 116 135 Z" fill="url(#dressGrad)"/>
+      <circle cx="80" cy="138" r="7" fill="#b5dcf9"/>
+      <circle cx="120" cy="138" r="7" fill="#b5dcf9"/>
+      <!-- 腕 -->
+      <line x1="79" y1="143" x2="74" y2="160" stroke="#ffe4cd" stroke-width="7" stroke-linecap="round"/>
+      <line x1="121" y1="143" x2="126" y2="160" stroke="#ffe4cd" stroke-width="7" stroke-linecap="round"/>
+      <!-- ドレスのキラキラ -->
+      <path d="M90 175 l1.5 3.5 3.5 1.5 -3.5 1.5 -1.5 3.5 -1.5 -3.5 -3.5 -1.5 3.5 -1.5 Z" fill="#fff" opacity=".9"/>
+      <path d="M112 198 l1.5 3.5 3.5 1.5 -3.5 1.5 -1.5 3.5 -1.5 -3.5 -3.5 -1.5 3.5 -1.5 Z" fill="#fff" opacity=".9"/>
+      <path d="M100 160 l1.2 2.8 2.8 1.2 -2.8 1.2 -1.2 2.8 -1.2 -2.8 -2.8 -1.2 2.8 -1.2 Z" fill="#fff" opacity=".8"/>
+      <!-- くつ -->
+      <ellipse cx="88" cy="232" rx="8" ry="4" fill="#7fb8e8"/>
+      <ellipse cx="112" cy="232" rx="8" ry="4" fill="#7fb8e8"/>
+    </svg></div>
     <div id="status">ボタンをおしてね！</div>
     <div id="meter"><div></div></div>
   </div>
@@ -124,7 +169,7 @@
     </div>
   </div>
 
-<script src="config.js"></script>
-<script src="app.js"></script>
+<script src="config.js?v=4"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>
