@@ -52,6 +52,19 @@
   /* 音量メーター（しゃべってる感） */
   #meter { width: 200px; height: 10px; background: #ffffff88; border-radius: 999px; overflow: hidden; margin-top: 10px; }
   #meter > div { height: 100%; width: 0%; background: linear-gradient(90deg, #7ed957, #ffd93b); transition: width .08s; }
+  /* どっちかな？カードゲーム */
+  .hidden { display: none !important; }
+  #cards { display: flex; gap: 28px; margin-top: 14px; }
+  .card {
+    width: 120px; height: 120px; border-radius: 24px; border: none; cursor: pointer;
+    font-size: 64px; background: #fff; box-shadow: 0 6px 0 rgba(0,0,0,.12);
+    transition: transform .1s;
+  }
+  .card:active { transform: scale(1.12); }
+  /* お祝いの紙吹雪 */
+  .confetti { position: fixed; top: -40px; font-size: 28px; z-index: 5; pointer-events: none;
+    animation: fall 2.2s linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: .8; } }
   /* APIキー入力（初回のみ・保護者向け） */
   #key-modal {
     position: fixed; inset: 0; background: rgba(0,0,0,.45);
@@ -138,6 +151,10 @@
     </svg></div>
     <div id="status">ボタンをおしてね！</div>
     <div id="meter"><div></div></div>
+    <div id="cards" class="hidden">
+      <button class="card" id="card0"></button>
+      <button class="card" id="card1"></button>
+    </div>
   </div>
 
   <div id="bottom">
@@ -147,6 +164,7 @@
       <button class="topic" data-topic="colors" title="いろ">🎨</button>
       <button class="topic" data-topic="numbers and counting" title="かず">✋</button>
       <button class="topic" data-topic="an animal sound quiz game" title="クイズ">❓</button>
+      <button class="topic" id="game-btn" title="カードゲーム">🎮</button>
     </div>
     <div id="btn-row">
       <div>
@@ -169,7 +187,7 @@
     </div>
   </div>
 
-<script src="config.js?v=4"></script>
-<script src="app.js?v=4"></script>
+<script src="config.js?v=6"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>

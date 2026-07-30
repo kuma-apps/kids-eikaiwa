@@ -58,6 +58,8 @@ async function startSession() {
 
 function stopSession(msg) {
   running = false;
+  game = null;
+  cardsEl.classList.add("hidden");
   try { ws && ws.close(); } catch (_) {}
   ws = null;
   stopPlayback();
@@ -139,7 +141,9 @@ function connectWS() {
           model: GEMINI_MODEL,
           generationConfig: {
             responseModalities: ["AUDIO"],
-            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VOICE_NAME } } }
+            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VOICE_NAME } } },
+            // 「考えてから話す」をオフにして即答させる（高音質モデルの遅延対策）
+            thinkingConfig: { thinkingBudget: 0 }
           },
           systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
           // 話し終わり判定を速める（無音の待ち時間を短縮）
@@ -244,6 +248,105 @@ document.querySelectorAll(".topic").forEach(b => {
     setStatus("おはなし かえるね！", "talking");
   };
 });
+
+// ---------- どっちかな？カードゲーム ----------
+const CARD_SETS = [
+  [{ e: "🐶", w: "dog" }, { e: "🐱", w: "cat" }],
+  [{ e: "🍎", w: "apple" }, { e: "🍌", w: "banana" }],
+  [{ e: "🐘", w: "elephant" }, { e: "🐰", w: "rabbit" }],
+  [{ e: "🚗", w: "car" }, { e: "⭐", w: "star" }],
+  [{ e: "🐟", w: "fish" }, { e: "🐦", w: "bird" }],
+  [{ e: "🍓", w: "strawberry" }, { e: "🍇", w: "grapes" }],
+  [{ e: "👑", w: "crown" }, { e: "🎀", w: "ribbon" }],
+  [{ e: "❄️", w: "snow" }, { e: "🌸", w: "flower" }]
+];
+const cardsEl = $("cards");
+const cardBtns = [$("card0"), $("card1")];
+let game = null; // { round, pair, target }
+
+$("game-btn").onclick = () => {
+  if (!running || game) return;
+  game = { round: 0, pair: null, target: null };
+  nextRound(null);
+};
+
+// 新しいラウンド開始（prevWord: 直前の正解ワード。褒め＋次の出題を1メッセージで送る）
+function nextRound(prevWord) {
+  game.round++;
+  const pair = CARD_SETS[Math.floor(Math.random() * CARD_SETS.length)].slice();
+  if (Math.random() < 0.5) pair.reverse();
+  game.pair = pair;
+  game.target = pair[Math.floor(Math.random() * 2)];
+  cardBtns[0].textContent = pair[0].e;
+  cardBtns[1].textContent = pair[1].e;
+  cardsEl.classList.remove("hidden");
+  stopPlayback();
+  const intro = prevWord
+    ? "(She tapped the " + prevWord + " — correct! Praise her briefly like 'Yay! Great!'. Then next question. "
+    : "(Card game starts! Say 'Let's play a game!'. ";
+  sendText(intro + "The screen shows " + pair[0].w + " and " + pair[1].w +
+    ". Ask her slowly: 'Where is the " + game.target.w + "?' Keep it short.)");
+  setStatus("どっちかな？", "talking");
+}
+
+cardBtns.forEach((btn, i) => {
+  btn.onclick = () => {
+    if (!game || !game.pair) return;
+    const tapped = game.pair[i];
+    if (tapped.w === game.target.w) {
+      chime(true);
+      addStar();
+      if (game.round >= 3) {
+        // 3問正解でゲームクリア
+        game = null;
+        cardsEl.classList.add("hidden");
+        confetti(24);
+        stopPlayback();
+        sendText("(She tapped the " + tapped.w + " — correct! GAME CLEAR, 3 out of 3! " +
+          "Celebrate her joyfully like a fanfare: 'Yay! You did it! Three stars!' " +
+          "Then go back to easy chatting.)");
+        setStatus("ゲームクリア！すごい！", "talking");
+      } else {
+        confetti(8);
+        nextRound(tapped.w);
+      }
+    } else {
+      chime(false);
+      stopPlayback();
+      sendText("(She tapped the " + tapped.w + " — not quite. Gently say 'Almost! Try again!' " +
+        "and ask the same question again, slower.)");
+    }
+  };
+});
+
+// ピンポン音／ブブー音（WebAudioで生成、音声ファイル不要）
+function chime(good) {
+  if (!playCtx) return;
+  const t = playCtx.currentTime;
+  const notes = good ? [880, 1320] : [230];
+  notes.forEach((f, i) => {
+    const o = playCtx.createOscillator(), g = playCtx.createGain();
+    o.type = "sine";
+    o.frequency.value = f;
+    g.gain.setValueAtTime(0.22, t + i * 0.12);
+    g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.12 + 0.28);
+    o.connect(g); g.connect(playCtx.destination);
+    o.start(t + i * 0.12); o.stop(t + i * 0.12 + 0.3);
+  });
+}
+
+// 紙吹雪
+function confetti(n) {
+  for (let i = 0; i < n; i++) {
+    const sp = document.createElement("span");
+    sp.className = "confetti";
+    sp.textContent = ["🎊", "✨", "⭐", "❄️"][i % 4];
+    sp.style.left = Math.random() * 100 + "vw";
+    sp.style.animationDelay = (Math.random() * 0.6) + "s";
+    document.body.appendChild(sp);
+    setTimeout(() => sp.remove(), 3200);
+  }
+}
 
 // ---------- util ----------
 function b64FromBuffer(buffer) {

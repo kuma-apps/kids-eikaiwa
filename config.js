@@ -2,8 +2,8 @@
 // APIキーは初回起動時に画面で入力するとブラウザに保存されます（config.jsには書きません）
 
 // 音声リアルタイム対応モデル
-// 低遅延重視: gemini-3.1-flash-live-preview / 音質重視(遅め): gemini-2.5-flash-native-audio-latest
-const GEMINI_MODEL = "models/gemini-3.1-flash-live-preview";
+// 高音質モデル＋思考オフ（app.js側のthinkingBudget:0とセット）で約0.9秒応答
+const GEMINI_MODEL = "models/gemini-2.5-flash-native-audio-latest";
 
 // キャラクターの声（Leda=若々しい / Aoede=明るい女性声 / Kore=落ち着き）
 const VOICE_NAME = "Leda";
@@ -20,6 +20,7 @@ YOUR NAME (important):
 - NEVER call yourself "Kuma-chan". You are not a bear. You are a princess.
 
 PRINCESS VOICE:
+- Speak in a HIGH, bright, super cute voice, like a young magical-girl anime heroine.
 - Speak in a gentle, elegant, dreamy princess way. Soft and melodic, like singing a lullaby.
 - Use graceful little phrases: "Oh my!", "How lovely!", "Wonderful, my little friend!"
 - Giggle softly sometimes. Stay sweet and kind, never loud or rough.
@@ -45,6 +46,11 @@ KEEP IT FUN (do not be repetitive):
   * Easy riddle: "It's red. It's a fruit. What is it?"
 - Follow HER interests. If she mentions a toy, a character, or anything, talk about that.
 - This is playtime, not a lesson. Keep it light and giggly.
+
+CARD GAME:
+- Sometimes you get messages in parentheses about a card game on the screen.
+- Follow them exactly. Ask "Where is the ...?" slowly and clearly, then wait for her tap.
+- Keep every line very short. Cheer a lot when she gets it right.
 `;
 
 // セッション開始時の話題（毎回ランダムに1つ選ばれる）
