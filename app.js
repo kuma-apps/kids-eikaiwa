@@ -44,6 +44,8 @@ async function startSession() {
     await setupAudio();
     await connectWS();
     running = true;
+    speechFrames = 0; silenceFrames = 0; childSpoke = false;
+    startIdleWatch();
     btn.textContent = "■"; btn.classList.add("stop"); btnLabel.textContent = "おわる";
   } catch (e) {
     console.error(e);
@@ -60,6 +62,8 @@ function stopSession(msg) {
   running = false;
   game = null;
   cardsEl.classList.add("hidden");
+  if (idleTimer) { clearInterval(idleTimer); idleTimer = null; }
+  aizuchiBufs = []; // playCtxごと破棄されるため次回セッションで再読込
   try { ws && ws.close(); } catch (_) {}
   ws = null;
   stopPlayback();
@@ -113,6 +117,7 @@ async function setupAudio() {
   src.connect(workletNode);
   workletNode.port.onmessage = (e) => {
     meterBar.style.width = Math.min(100, e.data.peak * 160) + "%";
+    detectSpeech(e.data.peak);
     if (ws && ws.readyState === WebSocket.OPEN) {
       // Safari(iPad)は16kHz指定を無視することがあるため、実際のレートを申告（API側で変換される）
       ws.send(JSON.stringify({
@@ -127,6 +132,7 @@ async function setupAudio() {
   // iOSはユーザー操作後にresumeが必要
   await micCtx.resume();
   await playCtx.resume();
+  loadAizuchi(); // 相槌音声の読み込み（初回のみ・完了を待たない）
 }
 
 // ---------- WebSocket（Live API） ----------
@@ -192,9 +198,65 @@ function connectWS() {
   });
 }
 
+// ---------- 相槌と沈黙フォロー ----------
+let aizuchiBufs = [], lastAizuchiAt = 0;
+let speechFrames = 0, silenceFrames = 0, childSpoke = false;
+let lastActivity = 0, idleTimer = null;
+
+async function loadAizuchi() {
+  if (aizuchiBufs.length || !playCtx) return;
+  for (let i = 1; i <= 5; i++) {
+    try {
+      const ab = await (await fetch("aizuchi_" + i + ".wav")).arrayBuffer();
+      aizuchiBufs.push(await playCtx.decodeAudioData(ab));
+    } catch (_) {}
+  }
+}
+
+// お姫様の声（Leda）で作った相槌をランダム再生
+function playAizuchi() {
+  if (!playCtx || !aizuchiBufs.length) return;
+  const src = playCtx.createBufferSource();
+  src.buffer = aizuchiBufs[Math.floor(Math.random() * aizuchiBufs.length)];
+  src.connect(playCtx.destination);
+  src.start();
+}
+
+// マイク音量から「話し終わり」をローカル検知 → 本回答が届くまでの間を相槌でつなぐ
+function detectSpeech(peak) {
+  if (peak > 0.05) {
+    speechFrames++; silenceFrames = 0;
+    if (speechFrames >= 3 && !childSpoke) { childSpoke = true; lastActivity = Date.now(); }
+  } else {
+    silenceFrames++; speechFrames = 0;
+    if (childSpoke && silenceFrames >= 7) { // 約450ms無音が続いたら話し終わり
+      childSpoke = false;
+      if (playingSources.length === 0 && Date.now() - lastAizuchiAt > 4000) {
+        lastAizuchiAt = Date.now();
+        playAizuchi();
+      }
+    }
+  }
+}
+
+// 12秒なにも起きなかったら、お姫様からやさしく再アプローチ
+function startIdleWatch() {
+  lastActivity = Date.now();
+  idleTimer = setInterval(() => {
+    if (!running || playingSources.length > 0) return;
+    if (Date.now() - lastActivity > 12000) {
+      lastActivity = Date.now();
+      sendText("(She has been quiet for a while. Gently re-engage her: " +
+        "repeat your question much slower with a short Japanese hint, " +
+        "or offer two easy choices like 'Cats or dogs?')");
+    }
+  }, 3000);
+}
+
 // ---------- 再生（24kHz PCM キュー） ----------
 function queuePcm(b64) {
   if (!playCtx) return;
+  lastActivity = Date.now();
   const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
   const pcm = new Int16Array(bytes.buffer);
   const buf = playCtx.createBuffer(1, pcm.length, 24000);
