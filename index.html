@@ -54,11 +54,12 @@
   #meter > div { height: 100%; width: 0%; background: linear-gradient(90deg, #7ed957, #ffd93b); transition: width .08s; }
   /* どっちかな？カードゲーム */
   .hidden { display: none !important; }
+  #quiz-display { font-size: 44px; margin-top: 12px; text-align: center; max-width: 92vw; letter-spacing: 6px; }
   #cards { display: flex; gap: 28px; margin-top: 14px; }
   .card {
     width: 120px; height: 120px; border-radius: 24px; border: none; cursor: pointer;
     font-size: 64px; background: #fff; box-shadow: 0 6px 0 rgba(0,0,0,.12);
-    transition: transform .1s;
+    transition: transform .1s; color: #5a4a8a; font-weight: bold;
   }
   .card:active { transform: scale(1.12); }
   /* お祝いの紙吹雪 */
@@ -151,6 +152,7 @@
     </svg></div>
     <div id="status">ボタンをおしてね！</div>
     <div id="meter"><div></div></div>
+    <div id="quiz-display" class="hidden"></div>
     <div id="cards" class="hidden">
       <button class="card" id="card0"></button>
       <button class="card" id="card1"></button>
@@ -164,7 +166,9 @@
       <button class="topic" data-topic="colors" title="いろ">🎨</button>
       <button class="topic" data-topic="numbers and counting" title="かず">✋</button>
       <button class="topic" data-topic="an animal sound quiz game" title="クイズ">❓</button>
-      <button class="topic" id="game-btn" title="カードゲーム">🎮</button>
+      <button class="topic" id="game-btn" title="どっちかな？">🎮</button>
+      <button class="topic" id="sound-btn" title="なきごえクイズ">🐾</button>
+      <button class="topic" id="count-btn" title="かずあてゲーム">🔢</button>
     </div>
     <div id="btn-row">
       <div>
@@ -187,7 +191,7 @@
     </div>
   </div>
 
-<script src="config.js?v=7"></script>
-<script src="app.js?v=7"></script>
+<script src="config.js?v=9"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>
