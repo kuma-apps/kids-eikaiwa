@@ -337,6 +337,25 @@ const CARD_SETS = [
   [{ e: "🦋", w: "butterfly" }, { e: "🐝", w: "bee" }]
 ];
 
+// どっちかな？用のフラットな絵札プール
+const CARD_ITEMS = CARD_SETS.flat();
+
+// なぞなぞゲーム用（hints=やさしい英語ヒント3つ）
+const RIDDLE_ITEMS = [
+  { e: "🍌", w: "banana", hints: ["It's yellow.", "It's long.", "Monkeys love it!"] },
+  { e: "🍎", w: "apple", hints: ["It's red.", "It's round.", "It's a fruit."] },
+  { e: "🐱", w: "cat", hints: ["It says meow.", "It's soft.", "It likes fish!"] },
+  { e: "🐶", w: "dog", hints: ["It says woof.", "It loves to play.", "It's your friend!"] },
+  { e: "☀️", w: "sun", hints: ["It's in the sky.", "It's hot.", "It's bright!"] },
+  { e: "❄️", w: "snow", hints: ["It's white.", "It's cold.", "It falls in winter!"] },
+  { e: "🚗", w: "car", hints: ["It goes vroom.", "It has wheels.", "It goes fast!"] },
+  { e: "🐟", w: "fish", hints: ["It swims.", "It's in the water.", "It has no legs!"] },
+  { e: "🍦", w: "ice cream", hints: ["It's cold.", "It's sweet.", "Yummy dessert!"] },
+  { e: "🐘", w: "elephant", hints: ["It's big.", "It's gray.", "It has a long nose!"] },
+  { e: "🌈", w: "rainbow", hints: ["It's in the sky.", "It has many colors.", "It comes after rain!"] },
+  { e: "🍓", w: "strawberry", hints: ["It's red.", "It's small.", "It's sweet!"] }
+];
+
 // なきごえクイズ用の動物（e=絵、w=名前、s=鳴きまね）
 const SOUND_ANIMALS = [
   { e: "🐶", w: "dog", s: "Woof woof!" },
@@ -357,27 +376,17 @@ const COUNT_ITEMS = [
   { e: "🌸", w: "flowers" }, { e: "🐟", w: "fish" }, { e: "🧁", w: "cupcakes" }
 ];
 
-// 山札方式：全ペアを使い切るまで同じ問題を出さない
-let deck = [];
-function drawSet() {
-  if (!deck.length) {
-    deck = CARD_SETS.map((_, i) => i);
-    for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [deck[i], deck[j]] = [deck[j], deck[i]];
-    }
-  }
-  return CARD_SETS[deck.pop()];
-}
 const cardsEl = $("cards");
-const cardBtns = [$("card0"), $("card1")];
-let game = null; // { round, pair, target }
+const cardBtns = [$("card0"), $("card1"), $("card2")];
+let game = null; // { type, current, round, targetIndex, words }
 
 const displayEl = $("quiz-display");
 
 $("game-btn").onclick = () => startGame("cards");
 $("sound-btn").onclick = () => startGame("sound");
 $("count-btn").onclick = () => startGame("count");
+$("riddle-btn").onclick = () => startGame("riddle");
+$("mix-btn").onclick = () => startGame("mix");
 
 function startGame(type) {
   if (!running || game) return;
@@ -385,59 +394,83 @@ function startGame(type) {
   nextRound(null);
 }
 
-// 配列から重複しない2つを選ぶ
-function pick2(arr) {
-  const i = Math.floor(Math.random() * arr.length);
-  let j = Math.floor(Math.random() * (arr.length - 1));
-  if (j >= i) j++;
-  return [arr[i], arr[j]];
+// 配列から重複しないn個を選ぶ（シャッフルして先頭n個）
+function pickN(arr, n) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a.slice(0, n);
+}
+
+// カードの表示枚数を切り替え
+function setCards(faces) {
+  cardBtns.forEach((b, i) => {
+    if (i < faces.length) { b.textContent = faces[i]; b.classList.remove("hidden"); }
+    else { b.classList.add("hidden"); }
+  });
 }
 
 // 新しいラウンド開始（prevWord: 直前の正解。褒め＋次の出題を1メッセージで送り割り込みを防ぐ）
 function nextRound(prevWord) {
   game.round++;
+  // 前半は2択、後半は3択で難易度アップ
+  const opts = game.round <= GAME_ROUNDS / 2 ? 2 : 3;
+  // ミックスモードは毎問ちがう種類
+  game.current = game.type === "mix"
+    ? ["cards", "sound", "count", "riddle"][Math.floor(Math.random() * 4)]
+    : game.type;
   const intro = prevWord
     ? "(She tapped " + prevWord + " — correct! Praise her briefly like 'Yay! Great!'. Then next question. "
     : "(Game starts! Say 'Let's play a game!'. ";
   let ask = "";
   displayEl.classList.add("hidden");
 
-  if (game.type === "cards") {
+  if (game.current === "cards") {
     // どっちかな？
-    const pair = drawSet().slice();
-    if (Math.random() < 0.5) pair.reverse();
-    game.targetIndex = Math.floor(Math.random() * 2);
-    game.words = [pair[0].w, pair[1].w];
-    cardBtns[0].textContent = pair[0].e;
-    cardBtns[1].textContent = pair[1].e;
-    ask = "The screen shows " + pair[0].w + " and " + pair[1].w +
+    const items = pickN(CARD_ITEMS, opts);
+    game.targetIndex = Math.floor(Math.random() * opts);
+    game.words = items.map(x => x.w);
+    setCards(items.map(x => x.e));
+    ask = "The screen shows " + game.words.join(", ") +
       ". Ask her slowly: 'Where is the " + game.words[game.targetIndex] + "?' Keep it short.)";
-  } else if (game.type === "sound") {
+  } else if (game.current === "sound") {
     // なきごえクイズ
-    const pair = pick2(SOUND_ANIMALS);
-    game.targetIndex = Math.floor(Math.random() * 2);
-    const t = pair[game.targetIndex];
-    game.words = [pair[0].w, pair[1].w];
-    cardBtns[0].textContent = pair[0].e;
-    cardBtns[1].textContent = pair[1].e;
-    ask = "Animal sound quiz. The cards show " + pair[0].w + " and " + pair[1].w +
+    const items = pickN(SOUND_ANIMALS, opts);
+    game.targetIndex = Math.floor(Math.random() * opts);
+    const t = items[game.targetIndex];
+    game.words = items.map(x => x.w);
+    setCards(items.map(x => x.e));
+    ask = "Animal sound quiz. The cards show " + game.words.join(", ") +
       ". Make the " + t.w + "'s sound in a fun, exaggerated way, like '" + t.s + " " + t.s +
       "', WITHOUT saying the animal's name. Then ask: 'What animal? Touch it!')";
-  } else {
-    // かずあてゲーム
+  } else if (game.current === "count") {
+    // かずあてゲーム（前半2〜5個、後半3〜8個）
     const item = COUNT_ITEMS[Math.floor(Math.random() * COUNT_ITEMS.length)];
-    const n = 2 + Math.floor(Math.random() * 4); // 2〜5個
-    let wrong = n + (Math.random() < 0.5 ? -1 : 1);
-    if (wrong < 1) wrong = n + 1;
-    game.targetIndex = Math.floor(Math.random() * 2);
-    game.words = game.targetIndex === 0 ? [String(n), String(wrong)] : [String(wrong), String(n)];
-    cardBtns[0].textContent = game.words[0];
-    cardBtns[1].textContent = game.words[1];
+    const n = opts === 2 ? 2 + Math.floor(Math.random() * 4) : 3 + Math.floor(Math.random() * 6);
+    const numbers = opts === 2
+      ? pickN([n, Math.random() < 0.5 && n > 2 ? n - 1 : n + 1], 2)
+      : pickN([n, n - 1, n + 1], 3);
+    game.targetIndex = numbers.indexOf(n);
+    game.words = numbers.map(String);
+    setCards(game.words);
     displayEl.textContent = Array(n).fill(item.e).join(" ");
     displayEl.classList.remove("hidden");
-    ask = "Counting game. The screen shows " + n + " " + item.w + " and two number cards. " +
+    ask = "Counting game. The screen shows " + n + " " + item.w + " and number cards. " +
       "Ask her slowly: 'How many " + item.w + "?' If she is stuck, count together slowly. " +
       "The correct answer is " + n + ".)";
+  } else {
+    // なぞなぞゲーム（文の聞き取り練習）
+    const items = pickN(RIDDLE_ITEMS, opts);
+    game.targetIndex = Math.floor(Math.random() * opts);
+    const t = items[game.targetIndex];
+    game.words = items.map(x => x.w);
+    setCards(items.map(x => x.e));
+    ask = "Riddle game. The cards show " + game.words.join(", ") + ". The answer is " + t.w +
+      ". Give these hints SLOWLY, one by one, with a pause after each: " +
+      t.hints.map(h => "'" + h + "'").join(" ... ") +
+      " Then ask: 'What is it? Touch it!' NEVER say the answer word.)";
   }
   cardsEl.classList.remove("hidden");
   stopPlayback();
@@ -470,8 +503,9 @@ cardBtns.forEach((btn, i) => {
     } else {
       chime(false);
       stopPlayback();
-      const hint = game.type === "sound" ? "Make the sound one more time and let her try again."
-        : game.type === "count" ? "Count together with her slowly, then ask again."
+      const hint = game.current === "sound" ? "Make the sound one more time and let her try again."
+        : game.current === "count" ? "Count together with her slowly, then ask again."
+        : game.current === "riddle" ? "Give one more easy hint and let her try again."
         : "Ask the same question again, slower.";
       sendText("(She tapped " + tappedWord + " — not quite. Gently say 'Almost! Try again!' " + hint + ")");
     }
