@@ -26,7 +26,7 @@
   /* くまちゃん本体 */
   #bear-area { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   #bear {
-    font-size: 140px; line-height: 1; transition: transform .2s;
+    font-size: 140px; line-height: 1; transition: transform .2s; cursor: pointer;
     filter: drop-shadow(0 6px 8px rgba(0,0,0,.2));
   }
   #bear.talking { animation: bounce .45s infinite alternate ease-in-out; }
@@ -62,6 +62,16 @@
     transition: transform .1s; color: #5a4a8a; font-weight: bold;
   }
   .card:active { transform: scale(1.12); }
+  /* 1枚だけ出すとき（おしえてモード） */
+  .card--big { width: 180px; height: 180px; font-size: 96px; }
+  /* どっちがおおい？（絵の数をくらべるとき） */
+  .card--group { width: 190px; height: 150px; font-size: 27px; line-height: 1.3; padding: 8px; white-space: normal; letter-spacing: 0; word-spacing: -2px; }
+  /* 2回まちがえたら正解がひかる（行き止まりを作らない） */
+  .card--hint { animation: hintGlow 1s infinite alternate ease-in-out; }
+  @keyframes hintGlow {
+    from { box-shadow: 0 6px 0 rgba(0,0,0,.12); }
+    to   { box-shadow: 0 6px 0 rgba(0,0,0,.12), 0 0 0 8px #ffe27a, 0 0 26px 10px #ffd23c; }
+  }
   /* お祝いの紙吹雪 */
   .confetti { position: fixed; top: -40px; font-size: 28px; z-index: 5; pointer-events: none;
     animation: fall 2.2s linear forwards; }
@@ -108,7 +118,7 @@
     <div id="bear"><svg viewBox="0 0 200 270" width="175" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="dressGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#d6ecff"/><stop offset="1" stop-color="#8fc7f5"/>
+          <stop id="dressA" offset="0" stop-color="#d6ecff"/><stop id="dressB" offset="1" stop-color="#8fc7f5"/>
         </linearGradient>
       </defs>
       <!-- 後ろ髪 -->
@@ -138,8 +148,8 @@
       <rect x="96" y="126" width="8" height="8" fill="#ffe4cd"/>
       <!-- ドレス（スレンダーなAライン） -->
       <path d="M100 130 L84 135 Q77 141 75 151 L62 222 Q100 235 138 222 L125 151 Q123 141 116 135 Z" fill="url(#dressGrad)"/>
-      <circle cx="80" cy="138" r="7" fill="#b5dcf9"/>
-      <circle cx="120" cy="138" r="7" fill="#b5dcf9"/>
+      <circle class="dress-accent" cx="80" cy="138" r="7" fill="#b5dcf9"/>
+      <circle class="dress-accent" cx="120" cy="138" r="7" fill="#b5dcf9"/>
       <!-- 腕 -->
       <line x1="79" y1="143" x2="74" y2="160" stroke="#ffe4cd" stroke-width="7" stroke-linecap="round"/>
       <line x1="121" y1="143" x2="126" y2="160" stroke="#ffe4cd" stroke-width="7" stroke-linecap="round"/>
@@ -148,8 +158,8 @@
       <path d="M112 198 l1.5 3.5 3.5 1.5 -3.5 1.5 -1.5 3.5 -1.5 -3.5 -3.5 -1.5 3.5 -1.5 Z" fill="#fff" opacity=".9"/>
       <path d="M100 160 l1.2 2.8 2.8 1.2 -2.8 1.2 -1.2 2.8 -1.2 -2.8 -2.8 -1.2 2.8 -1.2 Z" fill="#fff" opacity=".8"/>
       <!-- くつ -->
-      <ellipse cx="88" cy="232" rx="8" ry="4" fill="#7fb8e8"/>
-      <ellipse cx="112" cy="232" rx="8" ry="4" fill="#7fb8e8"/>
+      <ellipse class="dress-shoe" cx="88" cy="232" rx="8" ry="4" fill="#7fb8e8"/>
+      <ellipse class="dress-shoe" cx="112" cy="232" rx="8" ry="4" fill="#7fb8e8"/>
     </svg></div>
     <div id="status">ボタンをおしてね！</div>
     <div id="meter"><div></div></div>
@@ -177,6 +187,11 @@
         <button class="topic" id="riddle-btn" title="なぞなぞ">💡</button>
         <button class="topic" id="mix-btn" title="ミックス">✨</button>
       </div>
+      <div class="btn-row">
+        <button class="topic" id="teach-btn" title="おしえてあげる">🎓</button>
+        <button class="topic" id="shop-btn" title="おみせやさん">🛍️</button>
+        <button class="topic" id="math-btn" title="さんすう">🧮</button>
+      </div>
     </div>
     <div id="btn-row">
       <div>
@@ -199,7 +214,7 @@
     </div>
   </div>
 
-<script src="config.js?v=11"></script>
-<script src="app.js?v=11"></script>
+<script src="config.js?v=13"></script>
+<script src="app.js?v=13"></script>
 </body>
 </html>
