@@ -12,6 +12,7 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; overflow: hidden; }
+  body { height: 100vh; height: 100dvh; }
   body {
     font-family: "Hiragino Maru Gothic ProN", "BIZ UDGothic", "Yu Gothic", sans-serif;
     background: linear-gradient(180deg, #cfe6ff 0%, #f0e8ff 60%, #ffe9f7 100%);
@@ -109,6 +110,26 @@
   }
   #slow-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.15); }
   .side-label { font-size: 14px; font-weight: bold; color: #555; text-align: center; margin-top: 6px; }
+  /* 背が低い画面（iPadの横向き・Safariのバーが出ているとき）は小さくして収める */
+  #bear svg { height: auto; }
+  @media (max-height: 900px) {
+    body { padding: 10px 16px; }
+    #bear svg { width: 130px; }
+    #stars { min-height: 36px; font-size: 26px; }
+    #main-btn { width: 110px; height: 110px; font-size: 48px; }
+    #slow-btn { width: 72px; height: 72px; font-size: 34px; }
+  }
+  @media (max-height: 760px) {
+    #bear svg { width: 95px; }
+    #status { font-size: 19px; min-height: 38px; padding: 6px 18px; }
+    .card { width: 100px; height: 100px; font-size: 54px; }
+    .card--group { width: 170px; height: 130px; font-size: 24px; }
+    .card--big { width: 140px; height: 140px; font-size: 72px; }
+    #quiz-display { font-size: 36px; margin-top: 6px; }
+    #main-btn { width: 92px; height: 92px; font-size: 40px; }
+    #slow-btn { width: 62px; height: 62px; font-size: 28px; }
+    #btn-label, .side-label { font-size: 14px; margin-top: 4px; }
+  }
 </style>
 </head>
 <body>
@@ -173,24 +194,23 @@
 
   <div id="bottom">
     <div id="topics">
+      <!-- 2026-11-10 オーナー指示: 今はさんすう関係だけ出す（ほかは hidden で隠しているだけ・消していない） -->
       <div class="btn-row">
+        <button class="topic" id="math-btn" title="さんすう">🧮</button>
+        <button class="topic" id="count-btn" title="かずあてゲーム">🔢</button>
+        <button class="topic" data-topic="numbers and counting" title="かず">✋</button>
+      </div>
+      <div class="btn-row hidden">
         <button class="topic" data-topic="animals" title="どうぶつ">🐶</button>
         <button class="topic" data-topic="fruits and food" title="たべもの">🍎</button>
         <button class="topic" data-topic="colors" title="いろ">🎨</button>
-        <button class="topic" data-topic="numbers and counting" title="かず">✋</button>
         <button class="topic" data-topic="singing a simple song together like ABC or counting" title="うた">🎵</button>
-      </div>
-      <div class="btn-row">
         <button class="topic" id="game-btn" title="どっちかな？">🎮</button>
         <button class="topic" id="sound-btn" title="なきごえクイズ">🐾</button>
-        <button class="topic" id="count-btn" title="かずあてゲーム">🔢</button>
         <button class="topic" id="riddle-btn" title="なぞなぞ">💡</button>
         <button class="topic" id="mix-btn" title="ミックス">✨</button>
-      </div>
-      <div class="btn-row">
         <button class="topic" id="teach-btn" title="おしえてあげる">🎓</button>
         <button class="topic" id="shop-btn" title="おみせやさん">🛍️</button>
-        <button class="topic" id="math-btn" title="さんすう">🧮</button>
       </div>
     </div>
     <div id="btn-row">
@@ -214,7 +234,7 @@
     </div>
   </div>
 
-<script src="config.js?v=13"></script>
-<script src="app.js?v=13"></script>
+<script src="config.js?v=14"></script>
+<script src="app.js?v=14"></script>
 </body>
 </html>
